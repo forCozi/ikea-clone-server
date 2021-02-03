@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class HFImage extends Model {
   public readonly id!: number;
@@ -17,9 +17,11 @@ HFImage.init(
     src: { type: DataTypes.STRING(128) },
     srcSet: {
       type: DataTypes.TEXT,
+      defaultValue: '',
     },
     sizes: {
       type: DataTypes.STRING(256),
+      defaultValue: '',
     },
   },
   {
@@ -31,6 +33,6 @@ HFImage.init(
   }
 );
 export const associate = (db: DbType): void => {
-  db.HFImage.belongsTo(db.HomeFurnishing);
+  db.HFImage.hasOne(db.HomeFurnishing);
 };
 export default HFImage;

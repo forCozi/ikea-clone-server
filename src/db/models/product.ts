@@ -1,13 +1,14 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class Product extends Model {
-  public readonly id!: number;
+  public id!: string;
   public title!: string;
   public prCost!: number;
   public slCost!: number;
   public detailInfo!: string;
+  public summary!: string;
   public size!: string;
   public sold!: number;
   public readonly createdAt!: Date;
@@ -15,23 +16,37 @@ class Product extends Model {
 }
 Product.init(
   {
+    id: {
+      type: DataTypes.STRING(20),
+      primaryKey: true,
+    },
     title: {
       type: DataTypes.STRING(50),
+      defaultValue: '',
     },
     prCost: {
       type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     slCost: {
       type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
     detailInfo: {
       type: DataTypes.TEXT,
+      defaultValue: '',
+    },
+    summary: {
+      type: DataTypes.STRING(128),
+      defaultValue: '',
     },
     size: {
       type: DataTypes.STRING(30),
+      defaultValue: '',
     },
     sold: {
       type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
   },
   {

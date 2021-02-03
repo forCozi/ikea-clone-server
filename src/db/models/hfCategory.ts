@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class HFCategory extends Model {
   public readonly id!: number;
@@ -26,6 +26,6 @@ HFCategory.init(
   }
 );
 export const associate = (db: DbType): void => {
-  db.HFCategory.belongsTo(db.HomeFurnishing);
+  db.HFCategory.hasMany(db.HomeFurnishing);
 };
 export default HFCategory;

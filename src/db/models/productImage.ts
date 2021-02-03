@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class ProdImage extends Model {
   public readonly id!: number;

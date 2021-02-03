@@ -1,9 +1,9 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class SCatecory extends Model {
-  public readonly id!: number;
+  public id!: number;
   public name!: string;
 
   public readonly createdAt!: Date;
@@ -12,6 +12,10 @@ class SCatecory extends Model {
 
 SCatecory.init(
   {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+    },
     name: {
       type: DataTypes.STRING(32),
     },

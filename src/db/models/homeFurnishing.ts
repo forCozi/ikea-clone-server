@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
-import sequelize from './sequelize';
+import { sequelize } from './sequelize';
 
 class HomeFurnishing extends Model {
   public readonly id!: number;
@@ -26,8 +26,8 @@ HomeFurnishing.init(
   }
 );
 export const associate = (db: DbType): void => {
-  db.HomeFurnishing.hasOne(db.HFCategory);
-  db.HomeFurnishing.hasMany(db.HFImage);
+  db.HomeFurnishing.belongsTo(db.HFCategory);
+  db.HomeFurnishing.belongsTo(db.HFImage);
   db.HomeFurnishing.hasMany(db.HFProduct);
 };
 export default HomeFurnishing;

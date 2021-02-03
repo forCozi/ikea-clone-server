@@ -9,6 +9,7 @@ import path from 'path';
 import passport from 'passport';
 import passportConfig from './passport';
 import { sequelize } from './db/models';
+// import insertRouter from './utils/insert';
 
 dotenv.config();
 const prod = process.env.NODE_ENV === 'production';
@@ -53,6 +54,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', router);
+// app.use('/scrap', insertRouter);
 app.listen(PORT, () => {
   console.log(`${PORT}번 포트에서 서버실행`);
 });
