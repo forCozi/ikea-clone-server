@@ -6,12 +6,17 @@ import router from './routes';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import path from 'path';
+import { sequelize } from './db/models';
 
 dotenv.config();
 const prod = process.env.NODE_ENV === 'production';
 const PORT = prod ? process.env.PROD_PORT : process.env.DEV_PORT;
 
 const app = express();
+sequelize
+  .sync({ force: false })
+  .then(() => console.log('디비가 연결되었습니다.'))
+  .catch(e => console.error(e));
 
 if (prod) {
   morgan('combined');
