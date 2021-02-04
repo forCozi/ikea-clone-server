@@ -65,7 +65,7 @@ export const associate = (db: DbType): void => {
   db.Product.hasMany(db.HFProduct);
   db.Product.belongsTo(db.BCatecory);
   db.Product.belongsTo(db.SCatecory);
-  db.Product.belongsToMany(db.User, { through: 'Cart' });
-  db.Product.belongsToMany(db.User, { through: 'WishList' });
+  db.Product.belongsToMany(db.User, { through: 'Cart', as: 'cartUser' });
+  db.Product.belongsToMany(db.User, { through: 'WishList', as: 'wishUser' });
 };
 export default Product;

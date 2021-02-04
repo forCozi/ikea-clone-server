@@ -14,8 +14,13 @@ export default (): void => {
             return done(null, false, {
               message: '존재하지 않는 이메일입니다.',
             });
+          if (!user.valid) {
+            return done(null, false, {
+              message: '이메일인증을 먼저 받아주세요',
+            });
+          }
           const result = await bcrypt.compare(password, user.password);
-          if (result) {
+          if (!result) {
             return done(null, false, {
               message: '비밀번호가 올바르지 않습니다.',
             });

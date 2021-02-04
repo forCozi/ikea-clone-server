@@ -1,5 +1,6 @@
-import { DataTypes, Model } from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
+import Product from './product';
 import { sequelize } from './sequelize';
 
 class User extends Model {
@@ -17,6 +18,9 @@ class User extends Model {
   public loginType!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+
+  public getCartItem!: BelongsToManyGetAssociationsMixin<Product>;
+  public getWishItem!: BelongsToManyGetAssociationsMixin<Product>;
 }
 
 User.init(
@@ -71,7 +75,7 @@ User.init(
 export const associate = (db: DbType): void => {
   db.User.hasMany(db.History);
   db.User.hasMany(db.Review);
-  db.User.belongsToMany(db.Product, { through: 'Cart' });
-  db.User.belongsToMany(db.Product, { through: 'WishList' });
+  db.User.belongsToMany(db.Product, { through: 'Cart', as: 'cartItem' });
+  db.User.belongsToMany(db.Product, { through: 'WishList', as: 'wishItem' });
 };
 export default User;

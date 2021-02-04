@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 import cryptoRandomString from 'crypto-random-string';
 import User from '../db/models/user';
+import passport from 'passport';
+import Product from '../db/models/product';
 
 const router = express.Router();
 
@@ -27,7 +29,7 @@ router.post('/', async (req, res, next) => {
       to: req.body.email,
       subject: 'IKEA 회원가입 인증번호',
       text: '안녕하세요!!',
-      html: `<span>아래 인증번호를 입력하세요 </span><h1>${randomNumber}</h1>`,
+      html: `<span>아래 인증번호를 입력하세요 </span><h1>${randomNumber}</h1><span>아니면 아래 링크를 확인해주세요</span><br/><a href='${process.env.SERVER_DOMAIN}/api/user/verif?email=${req.body.email}&number=${randomNumber}'></a>`,
     });
     const hashedPassword = await bcrypt.hash(req.body.password, 11);
     const user = await User.create({
@@ -66,6 +68,44 @@ router.post('/verif', async (req, res, next) => {
     console.error(e);
     next(e);
   }
+});
+
+//NOTE: 로그인
+router.post('/login', async (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      console.error(err);
+      return next(err);
+    }
+    if (info) {
+      return res.status(401).send(info.message);
+    }
+    return req.login(user, async loginErr => {
+      if (loginErr) {
+        console.error(loginErr);
+        return next(loginErr);
+      }
+      const computedUser = await User.findOne({
+        where: { id: user.id },
+        attributes: {
+          exclude: ['password', 'token', 'valid', 'verification', 'updatedAt'],
+        },
+        include: [
+          {
+            model: Product,
+            as: 'cartItem',
+            attributes: ['id'],
+          },
+          {
+            model: Product,
+            as: 'wishItem',
+            attributes: ['id'],
+          },
+        ],
+      });
+      return res.status(200).json({ computedUser });
+    });
+  })(req, res, next);
 });
 
 export default router;
