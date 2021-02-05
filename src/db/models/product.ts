@@ -11,6 +11,9 @@ class Product extends Model {
   public summary!: string;
   public size!: string;
   public sold!: number;
+  public SCategoryId!: number;
+
+  public cartUser!: [];
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
