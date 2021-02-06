@@ -1,5 +1,6 @@
-import { DataTypes, Model } from 'sequelize';
+import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
+import User from './user';
 import { sequelize } from './sequelize';
 
 class Product extends Model {
@@ -14,6 +15,9 @@ class Product extends Model {
   public SCategoryId!: number;
 
   public cartUser!: [];
+  public wishLength!: number;
+
+  public getWishUser!: BelongsToManyGetAssociationsMixin<User>;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }

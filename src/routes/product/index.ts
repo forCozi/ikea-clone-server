@@ -1,4 +1,5 @@
 import express from 'express';
+import { Op } from 'sequelize';
 import BCatecory from '../../db/models/BigCategory';
 import Product from '../../db/models/product';
 import ProdImage from '../../db/models/productImage';
@@ -7,6 +8,37 @@ import User from '../../db/models/user';
 import { DetailRequest, ListRequest } from './types';
 
 const router = express.Router();
+
+router.get('/search', async (req, res, next) => {
+  try {
+    const keyword = req.query.keyword;
+    const results = await Product.findAll({
+      where: {
+        [Op.or]: [
+          {
+            title: { [Op.like]: `%${keyword}%` },
+          },
+          // {
+          //   detailInfo: { [Op.like]: `%${keyword}%` },
+          // },
+          // {
+          //   summary: { [Op.like]: `%${keyword}%` },
+          // },
+        ],
+      },
+      attributes: ['id', 'title'],
+      include: [
+        { model: SCatecory, attributes: ['name'] },
+        { model: ProdImage, attributes: ['src'], limit: 1 },
+      ],
+      limit: 4,
+    });
+    res.status(200).json(results);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
 
 router.get('/list/:cateId', async (req: ListRequest, res, next) => {
   try {
@@ -45,15 +77,18 @@ router.get('/:productId', async (req: DetailRequest, res, next) => {
           model: ProdImage,
           attributes: { exclude: ['createdAt', 'ProductId', 'updatedAt'] },
         },
+        { model: User, as: 'wishUser', attributes: ['id'] },
       ],
     });
     if (!product) {
       return res.status(404).send('해당 상품을 찾을 수 없습니다.');
     }
-    return res.status(200).send(product);
+
+    return res.status(200).json(product);
   } catch (e) {
     console.error(e);
     next(e);
   }
 });
+
 export default router;
