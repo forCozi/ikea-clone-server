@@ -7,7 +7,7 @@ type ConfigType = {
   password: string;
   database: string;
   host: string;
-  [key: string]: string;
+  [key: string]: string | boolean;
 };
 interface IConfigGroup {
   development: ConfigType;
@@ -28,6 +28,7 @@ const config: IConfigGroup = {
     database: 'ikea_clone',
     host: process.env.DB_HOST as string,
     dialect: 'mysql',
+    logging: false,
   },
   production: {
     username: 'ikea',

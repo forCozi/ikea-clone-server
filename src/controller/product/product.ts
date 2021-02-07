@@ -1,15 +1,17 @@
-import express from 'express';
 import { Op } from 'sequelize';
 import BCatecory from '../../db/models/BigCategory';
 import Product from '../../db/models/product';
 import ProdImage from '../../db/models/productImage';
 import SCatecory from '../../db/models/smallCategory';
 import User from '../../db/models/user';
-import { DetailRequest, ListRequest } from './types';
+import {
+  DetailHandler,
+  ListHandler,
+  SearchHandler,
+} from '../../controller/product/types';
 
-const router = express.Router();
-
-router.get('/search', async (req, res, next) => {
+//NOTE: 검색
+export const searchProduct: SearchHandler = async (req, res, next) => {
   try {
     const keyword = req.query.keyword;
     const results = await Product.findAll({
@@ -38,9 +40,10 @@ router.get('/search', async (req, res, next) => {
     console.error(e);
     next(e);
   }
-});
+};
 
-router.get('/list/:cateId', async (req: ListRequest, res, next) => {
+//NOTE:리스트조회
+export const getProducts: ListHandler = async (req, res, next) => {
   try {
     if (!req.params.cateId) {
       return res.status(404).send('카테고리를 찾을 수 없습니다.');
@@ -63,9 +66,10 @@ router.get('/list/:cateId', async (req: ListRequest, res, next) => {
     console.error(e);
     next(e);
   }
-});
+};
 
-router.get('/:productId', async (req: DetailRequest, res, next) => {
+//NOTE:디테일 조회
+export const getProduct: DetailHandler = async (req, res, next) => {
   try {
     const product = await Product.findOne({
       where: { id: req.params.productId },
@@ -89,6 +93,4 @@ router.get('/:productId', async (req: DetailRequest, res, next) => {
     console.error(e);
     next(e);
   }
-});
-
-export default router;
+};

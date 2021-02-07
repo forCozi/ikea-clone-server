@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import expressSession from 'express-session';
 import cors from 'cors';
 import dotenv from 'dotenv-flow';
@@ -9,18 +9,22 @@ import path from 'path';
 import passport from 'passport';
 import passportConfig from './passport';
 import { sequelize } from './db/models';
+import { Error } from 'sequelize/types';
 // import insertRouter from './utils/insert';
 
-dotenv.config();
+const test = process.env.NODE_ENV === 'test';
 const prod = process.env.NODE_ENV === 'production';
-const PORT = prod ? process.env.PROD_PORT : process.env.DEV_PORT;
+if (!test) {
+  dotenv.config();
+  sequelize
+    .sync({ force: false })
+    .then(() => console.log('디비가 연결되었습니다.'))
+    .catch(e => console.error(e));
+}
+const PORT = prod ? process.env.PROD_PORT : test ? 7777 : process.env.DEV_PORT;
 
 const app = express();
 passportConfig();
-sequelize
-  .sync({ force: false })
-  .then(() => console.log('디비가 연결되었습니다.'))
-  .catch(e => console.error(e));
 
 if (prod) {
   morgan('combined');
@@ -55,6 +59,12 @@ app.get('/', (req, res) => {
 
 app.use('/api', router);
 // app.use('/scrap', insertRouter);
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json(err);
+  next();
+});
 app.listen(PORT, () => {
   console.log(`${PORT}번 포트에서 서버실행`);
 });
+
+export default app;
