@@ -61,7 +61,6 @@ app.use('/api', router);
 // app.use('/scrap', insertRouter);
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json(err);
-  next();
 });
 app.listen(PORT, () => {
   console.log(`${PORT}번 포트에서 서버실행`);

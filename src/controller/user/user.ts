@@ -6,7 +6,7 @@ import User from '../../db/models/user';
 import passport from 'passport';
 import Product from '../../db/models/product';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   service: 'gmail',
   host: 'smtp.gmail.com',
   port: 587,
@@ -43,7 +43,7 @@ export const signUp: RequestHandler = async (req, res, next) => {
       verification: randomNumber,
       valid: 0,
     });
-    if (!user) return res.status(500).send('회원가입중 오류 발생');
+    if (!user) return res.status(400).send('회원가입중 오류 발생');
     const fullUser = await User.findOne({
       where: { id: user.id },
       attributes: ['id', 'email', 'name'],
@@ -158,7 +158,7 @@ export const logOut: RequestHandler = async (req, res, next) => {
     // if ((req.user?.email as string) !== req.params.email) {
     //   res.status(404).send('본인이 맞습니까?');
     // }
-    req.logout();
+    await req.logout();
     req.session.destroy(() => {
       res.send('성공적으로 로그아웃 되었습니다.');
     });
