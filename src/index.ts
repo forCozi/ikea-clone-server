@@ -31,7 +31,7 @@ if (prod) {
   app.use(cors({ origin: '도메인', credentials: true }));
 } else {
   morgan('dev');
-  app.use(cors({ origin: true, credentials: true }));
+  app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

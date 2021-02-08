@@ -8,7 +8,7 @@ function isUser(target: UserType): target is User {
 }
 
 export default (): void => {
-  passport.serializeUser((user: UserType, done) => {
+  passport.serializeUser<number>((user: UserType, done) => {
     if (isUser(user)) {
       done(null, user.id);
     }

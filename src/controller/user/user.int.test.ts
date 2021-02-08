@@ -4,6 +4,7 @@ import { sequelize } from '../../db/models';
 import cryptoRandomString from 'crypto-random-string';
 import User from '../../db/models/user';
 
+let sessionCookie: string[];
 beforeAll(async () => {
   try {
     await sequelize.sync({ force: false });
@@ -35,6 +36,12 @@ describe('POST api/user/', () => {
   });
 });
 describe('POST api/user/verif', () => {
+  test('should return 401 before Email verification', async () => {
+    const res = await request(app)
+      .post('/api/user/login')
+      .send({ email: newUser.email, password: newUser.password });
+    expect(res.status).toBe(401);
+  });
   test('should return Success verification', async () => {
     const user = await User.findOne({
       where: { email: newUser.email },
@@ -60,10 +67,21 @@ describe('POST api/user/logIn', () => {
       .send({ email: '123123123', password: 111 });
     expect(res.status).toBe(401);
   });
+  test('should return 401 when password wrong', async () => {
+    const res = await request(app)
+      .post('/api/user/login')
+      .send({ email: newUser.email, password: '111' });
+    expect(res.status).toBe(401);
+  });
   test('should return Success Login', async () => {
     const res = await request(app)
       .post('/api/user/login')
       .send({ email: newUser.email, password: newUser.password });
+    sessionCookie = res.header['set-cookie'][0]
+      .split(',')
+      .map((cookie: string) => {
+        return cookie.split(';')[0];
+      });
     expect(res.status).toBe(200);
   });
   test('should handle Error when alread Logined', async () => {
@@ -85,13 +103,15 @@ describe('PATCH api/user/find', () => {
 
 describe('GET api/user/logout/:email', () => {
   test('should logout', async () => {
-    const res = await request(app).get(`/api/user/logout/${newUser.email}`);
+    const res = await request(app)
+      .get(`/api/user/logout/${newUser.email}`)
+      .set('Cookie', sessionCookie);
     expect(res.text).toBe('성공적으로 로그아웃 되었습니다.');
   });
 });
 
 describe('DELETE api/user/:email', () => {
-  test('should logout', async () => {
+  test('should delete user', async () => {
     const res = await request(app).delete(`/api/user/${newUser.email}`);
     expect(res.status).toBe(200);
     expect(res.text).toBe('성공적으로 회원정보가 삭제되었습니다.');

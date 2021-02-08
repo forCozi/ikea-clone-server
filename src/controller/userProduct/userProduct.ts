@@ -53,7 +53,7 @@ export const removeCart: RemoveCartHandler = async (req, res, next) => {
       return res.status(401).send('다시로그인 해주세요');
     }
     const user = await User.findOne({ where: { email: req.body.userEmail } });
-    await user?.removeWishItem(req.body.productId);
+    await user?.removeCartItem(req.body.productId);
     return res.status(201).json({ productId: req.body.productId });
   } catch (e) {
     console.error(e);

@@ -155,9 +155,9 @@ export const changePassword: RequestHandler = async (req, res, next) => {
 //:NOTE:로그아웃
 export const logOut: RequestHandler = async (req, res, next) => {
   try {
-    // if ((req.user?.email as string) !== req.params.email) {
-    //   res.status(404).send('본인이 맞습니까?');
-    // }
+    if (req.user?.email !== req.params.email) {
+      res.status(404).send('본인이 맞습니까?');
+    }
     await req.logout();
     req.session.destroy(() => {
       res.send('성공적으로 로그아웃 되었습니다.');
