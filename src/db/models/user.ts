@@ -1,4 +1,10 @@
-import { BelongsToManyGetAssociationsMixin, DataTypes, Model } from 'sequelize';
+import {
+  BelongsToManyAddAssociationMixin,
+  BelongsToManyGetAssociationsMixin,
+  BelongsToManyRemoveAssociationMixin,
+  DataTypes,
+  Model,
+} from 'sequelize';
 import { DbType } from '.';
 import Product from './product';
 import { sequelize } from './sequelize';
@@ -19,6 +25,10 @@ class User extends Model {
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
+  public addCartItem!: BelongsToManyAddAssociationMixin<Product, string>;
+  public addWishItem!: BelongsToManyAddAssociationMixin<Product, string>;
+  public removeCartItem!: BelongsToManyRemoveAssociationMixin<Product, string>;
+  public removeWishItem!: BelongsToManyRemoveAssociationMixin<Product, string>;
   public getCartItem!: BelongsToManyGetAssociationsMixin<Product>;
   public getWishItem!: BelongsToManyGetAssociationsMixin<Product>;
 }

@@ -48,7 +48,7 @@ export const getProducts: ListHandler = async (req, res, next) => {
     if (!req.params.cateId) {
       return res.status(404).send('카테고리를 찾을 수 없습니다.');
     }
-    const limit = req.query.limit ? parseInt(req.query.limit) : 32;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 24;
     const offset = req.query.offset ? parseInt(req.query.offset) : 0;
     const products = await Product.findAll({
       where: { SCategoryId: req.params.cateId },

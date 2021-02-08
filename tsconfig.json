@@ -6,6 +6,6 @@
         "moduleResolution": "Node",
         "esModuleInterop": true,
         "resolveJsonModule": true,
-        "typeRoots": ["./node_modules/@types","./src/types"]
+        "typeRoots": ["./src/types","./node_modules/@types"]
     },
 }
