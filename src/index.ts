@@ -10,7 +10,6 @@ import passport from 'passport';
 import passportConfig from './passport';
 import { sequelize } from './db/models';
 import { Error } from 'sequelize/types';
-// import insertRouter from './utils/insert';
 
 const test = process.env.NODE_ENV === 'test';
 const prod = process.env.NODE_ENV === 'production';
@@ -31,7 +30,7 @@ if (prod) {
   app.use(cors({ origin: '도메인', credentials: true }));
 } else {
   morgan('dev');
-  app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+  app.use(cors({ origin: true, credentials: true }));
 }
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -59,6 +58,7 @@ app.get('/', (req, res) => {
 
 app.use('/api', router);
 // app.use('/scrap', insertRouter);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json(err);
 });

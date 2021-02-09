@@ -156,7 +156,7 @@ export const changePassword: RequestHandler = async (req, res, next) => {
 export const logOut: RequestHandler = async (req, res, next) => {
   try {
     if (req.user?.email !== req.params.email) {
-      res.status(404).send('본인이 맞습니까?');
+      return res.status(404).send('본인이 맞습니까?');
     }
     await req.logout();
     req.session.destroy(() => {

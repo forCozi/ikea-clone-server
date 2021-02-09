@@ -25,6 +25,13 @@ describe('ADD WISH', () => {
     expect(User.findOne).toBeCalledWith({ where: { email: 'email' } });
     expect(addWishItem).toBeCalledWith('123');
   });
+  test('should return 404 when user not exist', async () => {
+    req.user = { email: 'email' };
+    req.body = { userEmail: 'email', productId: '123' };
+    (User.findOne as jest.Mock).mockReturnValue(null);
+    await addWish(req, res, next);
+    expect(res.statusCode).toBe(404);
+  });
   test('should handle Error', async () => {
     const errorMsg = { message: 'error' };
     const rejectedPromise = Promise.reject(errorMsg);
@@ -40,7 +47,7 @@ describe('REMOVE WISH', () => {
   });
   test('should call User.findOne', async () => {
     req.user = { email: 'email' };
-    req.body = { userEmail: 'email', productId: '123' };
+    req.query = { email: 'email', productid: '123' };
     const removeWishItem = jest.fn();
     (User.findOne as jest.Mock).mockReturnValue({ removeWishItem });
     await removeWish(req, res, next);
@@ -69,6 +76,13 @@ describe('ADD CART', () => {
     expect(User.findOne).toBeCalledWith({ where: { email: 'email' } });
     expect(addCartItem).toBeCalledWith('123');
   });
+  test('should return 404 when user not exist', async () => {
+    req.user = { email: 'email' };
+    req.body = { userEmail: 'email', productId: '123' };
+    (User.findOne as jest.Mock).mockReturnValue(null);
+    await addCart(req, res, next);
+    expect(res.statusCode).toBe(404);
+  });
   test('should handle Error', async () => {
     const errorMsg = { message: 'error' };
     const rejectedPromise = Promise.reject(errorMsg);
@@ -84,7 +98,7 @@ describe('REMOVE CART', () => {
   });
   test('should call User.findOne', async () => {
     req.user = { email: 'email' };
-    req.body = { userEmail: 'email', productId: '123' };
+    req.query = { email: 'email', productid: '123' };
     const removeCartItem = jest.fn();
     (User.findOne as jest.Mock).mockReturnValue({ removeCartItem });
     await removeCart(req, res, next);
