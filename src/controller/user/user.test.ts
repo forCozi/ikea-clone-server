@@ -13,7 +13,6 @@ import {
   verifiEmail,
 } from './user';
 import passport from 'passport';
-import passportConfig from '../../passport/index';
 
 let req: MockRequest<any>;
 let res: MockResponse<any>;

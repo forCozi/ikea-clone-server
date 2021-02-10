@@ -32,7 +32,7 @@ export type ListHandler = RequestHandler<
     limit?: string;
     lastId?: string;
     offset?: string;
-    filters: { [key: string]: unknown };
+    filter: string;
   }
 >;
 
