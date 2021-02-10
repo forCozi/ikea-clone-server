@@ -1,11 +1,5 @@
-import { Request, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 
-export type AddCartRequest = Request<
-  undefined,
-  unknown,
-  { productId: string; userEmail: string },
-  unknown
->;
 export type AddCartHandler = RequestHandler<
   unknown,
   unknown,
@@ -13,12 +7,6 @@ export type AddCartHandler = RequestHandler<
   unknown
 >;
 
-export type AddWishRequest = Request<
-  undefined,
-  unknown,
-  { productId: string; userEmail: string },
-  unknown
->;
 export type AddWishHandler = RequestHandler<
   unknown,
   unknown,
@@ -26,12 +14,6 @@ export type AddWishHandler = RequestHandler<
   unknown
 >;
 
-export type RemoveCartRequest = Request<
-  undefined,
-  unknown,
-  { productId: string; userEmail: string },
-  unknown
->;
 export type RemoveCartHandler = RequestHandler<
   unknown,
   unknown,
@@ -39,15 +21,30 @@ export type RemoveCartHandler = RequestHandler<
   { productid: string; email: string }
 >;
 
-export type RemoveWishRequest = Request<
-  undefined,
-  unknown,
-  unknown,
-  { productid: string; email: string }
->;
 export type RemoveWishHandler = RequestHandler<
   unknown,
   unknown,
   unknown,
   { productid: string; email: string }
+>;
+
+export type GetCartHandler = RequestHandler<
+  { email: string },
+  unknown,
+  unknown,
+  unknown
+>;
+
+export type GetWishHandler = RequestHandler<
+  { email: string },
+  unknown,
+  unknown,
+  unknown
+>;
+
+export type GetHistoryHandler = RequestHandler<
+  { email: string },
+  unknown,
+  unknown,
+  unknown
 >;

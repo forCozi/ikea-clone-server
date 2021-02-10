@@ -2,6 +2,9 @@ import express from 'express';
 import {
   addCart,
   addWish,
+  getCart,
+  getHistory,
+  getWish,
   removeCart,
   removeWish,
 } from '../controller/userProduct/userProduct';
@@ -19,4 +22,13 @@ router.delete('/wish', removeWish);
 
 //NOTE:장바구니삭제
 router.delete('/cart', removeCart);
+
+//NOTE:위시조회
+router.get('/wish/:email', getWish);
+
+//NOTE:카트조회
+router.get('/cart/:email', getCart);
+
+//NOTE:내역조회
+router.get('/history/:email', getHistory);
 export default router;
