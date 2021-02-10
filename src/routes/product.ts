@@ -3,6 +3,7 @@ import {
   getProducts,
   getProduct,
   searchProduct,
+  getHomeFurnishing,
 } from '../controller/product/product';
 
 const router = express.Router();
@@ -15,5 +16,8 @@ router.get('/list/:cateId', getProducts);
 
 //NOTE:상품디테일조회
 router.get('/:productId', getProduct);
+
+//NOTE:상품디테일조회
+router.get('/homefurnishing/:cateId', getHomeFurnishing);
 
 export default router;

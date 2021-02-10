@@ -6,6 +6,7 @@ import {
   logIn,
   logOut,
   signUp,
+  updateUser,
   verifiEmail,
 } from '../controller/user/user';
 
@@ -32,4 +33,6 @@ router.get('/logout/:email', logOut);
 //NOTE: 회원탈퇴
 router.delete('/:email', deleteUser);
 
+//NOTE: 회원정보수정
+router.patch('/', updateUser);
 export default router;

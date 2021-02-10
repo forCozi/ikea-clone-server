@@ -48,3 +48,9 @@ export type DetailHandler = RequestHandler<
   undefined,
   undefined
 >;
+export type HomeFurnishingHandler = RequestHandler<
+  { cateId: string },
+  unknown,
+  undefined,
+  { offset?: string; limit?: string }
+>;

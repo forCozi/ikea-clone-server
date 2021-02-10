@@ -6,9 +6,13 @@ import SCatecory from '../../db/models/smallCategory';
 import User from '../../db/models/user';
 import {
   DetailHandler,
+  HomeFurnishingHandler,
   ListHandler,
   SearchHandler,
 } from '../../controller/product/types';
+import HomeFurnishing from '../../db/models/homeFurnishing';
+import HFImage from '../../db/models/hfImage';
+import HFProduct from '../../db/models/hfProduct';
 
 //NOTE: 검색
 export const searchProduct: SearchHandler = async (req, res, next) => {
@@ -109,6 +113,41 @@ export const getProduct: DetailHandler = async (req, res, next) => {
     }
 
     return res.status(200).json(product);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+export const getHomeFurnishing: HomeFurnishingHandler = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const cateId = parseInt(req.params.cateId) || 0;
+    const limit = req.query.limit ? parseInt(req.query.limit) : 12;
+    const offset = req.query.offset ? parseInt(req.query.offset) : 0;
+    const list = await HomeFurnishing.findAll({
+      where: { HFCategoryId: cateId },
+      limit,
+      offset,
+      order: ['createdAt'],
+      attributes: ['id', 'info', 'createdAt'],
+      include: [
+        { model: HFImage, attributes: { exclude: ['createdAt', 'updatedAt'] } },
+        {
+          model: HFProduct,
+          attributes: {
+            exclude: ['createdAt', 'updatedAt', 'HomeFurnishingId'],
+          },
+          include: [
+            { model: Product, attributes: ['title', 'summary', 'slCost'] },
+          ],
+        },
+      ],
+    });
+    return res.status(200).json(list);
   } catch (e) {
     console.error(e);
     next(e);

@@ -169,7 +169,6 @@ export const logOut: RequestHandler = async (req, res, next) => {
 };
 
 //NOTE: 회원탈퇴
-
 export const deleteUser: RequestHandler = async (req, res, next) => {
   try {
     const exUser = await User.findOne({ where: { email: req.params.email } });
@@ -181,6 +180,21 @@ export const deleteUser: RequestHandler = async (req, res, next) => {
       return res.status(404).send('회원삭제에 실패하였습니다.');
     }
     return res.status(200).send('성공적으로 회원정보가 삭제되었습니다.');
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+//NOTE:회원정보수정
+export const updateUser: RequestHandler = async (req, res, next) => {
+  try {
+    const exUser = await User.findOne({ where: { email: req.user?.email } });
+    if (!exUser) {
+      return res.status(404).send('회원정보가 없습니다.');
+    }
+    await exUser.update(req.body.data);
+    return res.status(201).send(req.body.data);
   } catch (e) {
     console.error(e);
     next(e);
