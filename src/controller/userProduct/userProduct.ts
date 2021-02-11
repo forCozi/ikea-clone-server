@@ -1,3 +1,4 @@
+import Cart from '../../db/models/cart';
 import History from '../../db/models/history';
 import Payment from '../../db/models/payment';
 import Product from '../../db/models/product';
@@ -35,12 +36,19 @@ export const addCart: AddCartHandler = async (req, res, next) => {
     }
     const user = await User.findOne({ where: { email: req.body.userEmail } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
-    const exCartItem = await user.getCartItem({
-      where: { id: req.body.productId },
+    const exCartItem = await Cart.findOne({
+      where: { ProductId: req.body.productId, UserId: user.id },
     });
-    if (exCartItem.length !== 0)
-      return res.status(404).send('이미 장바구니에 있습니다.');
-    await user.addCartItem(req.body.productId);
+    if (exCartItem) {
+      await exCartItem.update({ quantity: exCartItem.quantity + 1 });
+      return res.status(201).json({ productId: req.body.productId });
+    }
+    await Cart.create({
+      quantity: 1,
+      UserId: user.id,
+      ProductId: req.body.productId,
+    });
+    // await user.addCartItem(req.body.productId);
 
     return res.status(201).json({ productId: req.body.productId });
   } catch (e) {
@@ -64,7 +72,10 @@ export const removeCart: RemoveCartHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.query.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
-    await user.removeCartItem(req.query.productid);
+    await Cart.destroy({
+      where: { UserId: user.id, ProductId: req.query.productid },
+    });
+    // await user.removeCartItem(req.query.productid);
     return res.status(201).json({ productId: req.query.productid });
   } catch (e) {
     console.error(e);
@@ -98,18 +109,24 @@ export const getCart: GetCartHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.params.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
-    const cartList = await user.getCartItem({
-      attributes: ['id', 'title', 'slCost', 'prCost', 'summary', 'size'],
+    const cartLists = await Cart.findAll({
+      where: { userId: user.id },
       order: [['createdAt', 'DESC']],
-      include: [
-        {
-          model: ProdImage,
-          limit: 1,
-          attributes: { exclude: ['createdAt', 'updatedAt', 'productId'] },
-        },
-      ],
+      // include: [{ model: Product, include: [{ model: ProdImage }] }],
+      include: [{ model: User }],
     });
-    return res.status(200).json(cartList);
+    // const cartList = await user.getCartItem({
+    //   attributes: ['id', 'title', 'slCost', 'prCost', 'summary', 'size'],
+    //   order: [['createdAt', 'DESC']],
+    //   include: [
+    //     {
+    //       model: ProdImage,
+    //       limit: 1,
+    //       attributes: { exclude: ['createdAt', 'updatedAt', 'productId'] },
+    //     },
+    //   ],
+    // });
+    return res.status(200).json(cartLists);
   } catch (e) {
     console.error(e);
     next(e);
@@ -120,19 +137,36 @@ export const getHistory: GetHistoryHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.params.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
-    const history = await History.findAll({
+    const payments = await Payment.findAll({
       where: { UserId: user.id },
       order: [['createdAt', 'DESC']],
       include: [
-        { model: Payment },
         {
-          model: Product,
-          attributes: ['title', 'slCost', 'prCost', 'summary'],
-          include: [{ model: ProdImage, attributes: ['src'] }],
+          model: History,
+          attributes: ['quantity', 'id'],
+          include: [
+            {
+              model: Product,
+              attributes: ['title', 'slCost', 'prCost', 'summary'],
+              include: [{ model: ProdImage, attributes: ['src'] }],
+            },
+          ],
         },
       ],
     });
-    return res.status(200).json(history);
+    // const history = await History.findAll({
+    //   where: { UserId: user.id },
+    //   order: [['createdAt', 'DESC']],
+    //   include: [
+    //     { model: Payment },
+    //     {
+    //       model: Product,
+    //       attributes: ['title', 'slCost', 'prCost', 'summary'],
+    //       include: [{ model: ProdImage, attributes: ['src'] }],
+    //     },
+    //   ],
+    // });
+    return res.status(200).json(payments);
   } catch (e) {
     console.error(e);
     next(e);
@@ -168,7 +202,10 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
 
     if (payment) {
       for (let i = 0; i < req.body.productInfo.length; i++) {
-        await user.removeCartItem(req.body.productInfo[i].id);
+        await Cart.destroy({
+          where: { UserId: user.id, ProductId: req.body.productInfo[i].id },
+        });
+        // await user.removeCartItem(req.body.productInfo[i].id);
       }
     }
     res.status(201).json(histories);

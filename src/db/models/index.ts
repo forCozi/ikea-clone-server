@@ -1,5 +1,5 @@
 import BCatecory, { associate as associateBCatecory } from './BigCategory';
-import Cart from './cart';
+import Cart, { associate as associateCart } from './cart';
 import HFCategory, { associate as associateHFCategory } from './hfCategory';
 import HFImage, { associate as associateHFImage } from './hfImage';
 import HFProduct, { associate as associateHFProduct } from './hfProduct';
@@ -45,3 +45,4 @@ associateHFProduct(db);
 associateHFCategory(db);
 associateBCatecory(db);
 associateSCatecory(db);
+associateCart(db);

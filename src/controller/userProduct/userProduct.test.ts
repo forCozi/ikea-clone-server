@@ -1,4 +1,5 @@
 import httpMocks, { MockRequest, MockResponse } from 'node-mocks-http';
+import Cart from '../../db/models/cart';
 import User from '../../db/models/user';
 import { addCart, addWish, removeCart, removeWish } from './userProduct';
 
@@ -7,6 +8,8 @@ let res: MockResponse<any>;
 let next: jest.Mock<any, any>;
 beforeEach(() => {
   User.findOne = jest.fn();
+  Cart.destroy = jest.fn();
+  Cart.findOne = jest.fn();
   req = httpMocks.createRequest();
   res = httpMocks.createResponse();
   next = jest.fn();
@@ -67,14 +70,17 @@ describe('ADD CART', () => {
   test('should be function', () => {
     expect(typeof addCart).toBe('function');
   });
-  test('should call User.findOne', async () => {
+  test('should call User.findOne and Cart.findOne', async () => {
     req.user = { email: 'email' };
     req.body = { userEmail: 'email', productId: '123' };
-    const addCartItem = jest.fn();
-    (User.findOne as jest.Mock).mockReturnValue({ addCartItem });
+    const update = jest.fn();
+    (User.findOne as jest.Mock).mockReturnValue({ id: '1' });
+    (Cart.findOne as jest.Mock).mockReturnValue({ update, quantity: 1 });
     await addCart(req, res, next);
     expect(User.findOne).toBeCalledWith({ where: { email: 'email' } });
-    expect(addCartItem).toBeCalledWith('123');
+    expect(Cart.findOne).toBeCalledWith({
+      where: { ProductId: '123', UserId: '1' },
+    });
   });
   test('should return 404 when user not exist', async () => {
     req.user = { email: 'email' };
@@ -99,11 +105,13 @@ describe('REMOVE CART', () => {
   test('should call User.findOne', async () => {
     req.user = { email: 'email' };
     req.query = { email: 'email', productid: '123' };
-    const removeCartItem = jest.fn();
-    (User.findOne as jest.Mock).mockReturnValue({ removeCartItem });
+    (User.findOne as jest.Mock).mockReturnValue({ id: '1' });
     await removeCart(req, res, next);
     expect(User.findOne).toBeCalledWith({ where: { email: 'email' } });
-    expect(removeCartItem).toBeCalledWith('123');
+    expect(Cart.destroy).toBeCalledWith({
+      where: { UserId: '1', ProductId: '123' },
+    });
+    expect(res.statusCode).toBe(201);
   });
   test('should handle Error', async () => {
     const errorMsg = { message: 'error' };
