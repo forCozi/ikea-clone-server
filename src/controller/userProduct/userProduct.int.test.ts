@@ -13,7 +13,7 @@ beforeAll(async () => {
 test('should ', async () => {
   const res = await request(app)
     .post('/api/user/login')
-    .send({ email: 'yhg0337@naver.com', password: 'Dbdnjsrms1@' });
+    .send({ email: 'yhg0337@gmail.com', password: 'Dbdnjsrms1@' });
   sessionCookie = res.header['set-cookie'][0]
     .split(',')
     .map((cookie: string) => {
@@ -24,7 +24,7 @@ test('should ', async () => {
 describe('POST api/userproduct/wish', () => {
   test('should return 401', async () => {
     const res = await request(app).post('/api/userproduct/wish').send({
-      userEmail: 'yhg0337@naver.com',
+      userEmail: 'yhg0337@gmail.com',
       productId: '00141670',
     });
     expect(res.status).toBe(401);
@@ -34,7 +34,7 @@ describe('POST api/userproduct/wish', () => {
       .post('/api/userproduct/wish')
       .set('Cookie', sessionCookie)
       .send({
-        userEmail: 'yhg0337@naver.com',
+        userEmail: 'yhg0337@gmail.com',
         productId: '00141670',
       });
     expect(res.status).toBe(201);
@@ -45,7 +45,7 @@ describe('POST api/userproduct/wish', () => {
       .post('/api/userproduct/wish')
       .set('Cookie', sessionCookie)
       .send({
-        userEmail: 'yhg0337@naver.com',
+        userEmail: 'yhg0337@gmail.com',
         productId: '00141670111',
       });
     expect(res.status).toBe(500);
@@ -59,7 +59,7 @@ describe('POST api/userproduct/wish', () => {
 describe('POST api/userproduct/cart', () => {
   test('should return 401', async () => {
     const res = await request(app).post('/api/userproduct/cart').send({
-      userEmail: 'yhg0337@naver.com',
+      userEmail: 'yhg0337@gmail.com',
       productId: '00141670',
     });
     expect(res.status).toBe(401);
@@ -69,7 +69,7 @@ describe('POST api/userproduct/cart', () => {
       .post('/api/userproduct/cart')
       .set('Cookie', sessionCookie)
       .send({
-        userEmail: 'yhg0337@naver.com',
+        userEmail: 'yhg0337@gmail.com',
         productId: '00141670',
       });
     expect(res.status).toBe(201);
@@ -80,7 +80,7 @@ describe('POST api/userproduct/cart', () => {
       .post('/api/userproduct/cart')
       .set('Cookie', sessionCookie)
       .send({
-        userEmail: 'yhg0337@naver.com',
+        userEmail: 'yhg0337@gmail.com',
         productId: '00141670111',
       });
     expect(res.status).toBe(500);
@@ -94,7 +94,7 @@ describe('POST api/userproduct/cart', () => {
 describe('DELETE api/userproduct/cart', () => {
   test('should delete cartItem and return productId', async () => {
     const res = await request(app).delete('/api/userproduct/cart').query({
-      email: 'yhg0337@naver.com',
+      email: 'yhg0337@gmail.com',
       productid: '00141670',
     });
     expect(res.status).toBe(201);
@@ -102,7 +102,7 @@ describe('DELETE api/userproduct/cart', () => {
   });
   test('should handle Error', async () => {
     const res = await request(app).delete('/api/userproduct/cart').query({
-      email: 'yhg0337@naver.com11',
+      email: 'yhg0337@gmail.com11',
       productId: '00141670111',
     });
     expect(res.status).toBe(404);
@@ -113,7 +113,7 @@ describe('DELETE api/userproduct/cart', () => {
 describe('DELETE api/userproduct/wish', () => {
   test('should delete wishItem and return productId', async () => {
     const res = await request(app).delete('/api/userproduct/wish').query({
-      email: 'yhg0337@naver.com',
+      email: 'yhg0337@gmail.com',
       productid: '00141670',
     });
     expect(res.status).toBe(201);
@@ -121,7 +121,7 @@ describe('DELETE api/userproduct/wish', () => {
   });
   test('should handle Error', async () => {
     const res = await request(app).delete('/api/userproduct/wish').query({
-      email: 'yhg0337@naver.com11',
+      email: 'yhg0337@gmail.com11',
       productId: '00141670111',
     });
     expect(res.status).toBe(404);

@@ -13,6 +13,7 @@ import {
 import HomeFurnishing from '../../db/models/homeFurnishing';
 import HFImage from '../../db/models/hfImage';
 import HFProduct from '../../db/models/hfProduct';
+import Cart from '../../db/models/cart';
 
 //NOTE: 검색
 export const searchProduct: SearchHandler = async (req, res, next) => {
@@ -82,7 +83,7 @@ export const getProducts: ListHandler = async (req, res, next) => {
       attributes: { exclude: ['updatedAt'] },
       include: [
         { model: ProdImage, limit: 2, order: ['id'] },
-        { model: User, as: 'cartUser' },
+        { model: Cart, attributes: ['id', 'UserId'] },
       ],
     });
     res.status(200).json(products);
