@@ -71,7 +71,7 @@ export const getWish: GetWishHandler = async (req, res, next) => {
     const user = await User.findOne({ where: { email: req.params.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
     const wishList = await user.getWishItem({
-      attributes: ['id', 'title', 'slCost', 'summary', 'size'],
+      attributes: ['id', 'title', 'slCost', 'prCost', 'summary', 'size'],
       include: [
         {
           model: ProdImage,
@@ -92,7 +92,7 @@ export const getCart: GetCartHandler = async (req, res, next) => {
     const user = await User.findOne({ where: { email: req.params.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
     const cartList = await user.getCartItem({
-      attributes: ['id', 'title', 'slCost', 'summary', 'size'],
+      attributes: ['id', 'title', 'slCost', 'prCost', 'summary', 'size'],
       include: [
         {
           model: ProdImage,
@@ -118,7 +118,7 @@ export const getHistory: GetHistoryHandler = async (req, res, next) => {
         { model: Payment },
         {
           model: Product,
-          attributes: ['title', 'slCost', 'summary'],
+          attributes: ['title', 'slCost', 'prCost', 'summary'],
           include: [{ model: ProdImage, attributes: ['src'] }],
         },
       ],

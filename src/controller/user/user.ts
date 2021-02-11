@@ -5,6 +5,7 @@ import cryptoRandomString from 'crypto-random-string';
 import User from '../../db/models/user';
 import passport from 'passport';
 import Product from '../../db/models/product';
+import History from '../../db/models/history';
 
 export const transporter = nodemailer.createTransport({
   service: 'gmail',
@@ -101,6 +102,10 @@ export const logIn: RequestHandler = async (req, res, next) => {
           {
             model: Product,
             as: 'wishItem',
+            attributes: ['id'],
+          },
+          {
+            model: History,
             attributes: ['id'],
           },
         ],
