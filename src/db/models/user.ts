@@ -75,7 +75,7 @@ User.init(
   },
   {
     sequelize,
-    tableName: 'user',
+    tableName: 'USER',
     modelName: 'User',
     charset: 'utf8',
     collate: 'utf8_general_ci',
@@ -85,7 +85,8 @@ User.init(
 export const associate = (db: DbType): void => {
   db.User.hasMany(db.History);
   db.User.hasMany(db.Review);
-  db.User.belongsToMany(db.Product, { through: 'Cart', as: 'cartItem' });
-  db.User.belongsToMany(db.Product, { through: 'WishList', as: 'wishItem' });
+  db.User.hasMany(db.Payment);
+  db.User.hasMany(db.Cart);
+  db.User.belongsToMany(db.Product, { through: 'WISHLIST', as: 'wishItem' });
 };
 export default User;

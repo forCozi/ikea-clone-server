@@ -2,35 +2,34 @@ import { DataTypes, Model } from 'sequelize';
 import { DbType } from '.';
 import { sequelize } from './sequelize';
 
-class SCatecory extends Model {
-  public id!: number;
-  public name!: string;
+class Cart extends Model {
+  public readonly id!: number;
+
+  public quantity!: number;
+  public price!: number;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 }
 
-SCatecory.init(
+Cart.init(
   {
-    id: {
+    quantity: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
-    },
-    name: {
-      type: DataTypes.STRING(32),
+      defaultValue: 1,
     },
   },
   {
     sequelize,
-    modelName: 'SCategory',
-    tableName: 'S_CATEGORY',
+    modelName: 'Cart',
+    tableName: 'CART',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }
 );
 export const associate = (db: DbType): void => {
-  db.SCatecory.belongsTo(db.BCatecory);
-  db.SCatecory.hasMany(db.Product);
+  db.Cart.belongsTo(db.Product);
+  db.Cart.belongsTo(db.User);
 };
 
-export default SCatecory;
+export default Cart;

@@ -20,7 +20,7 @@ History.init(
   {
     sequelize,
     modelName: 'History',
-    tableName: 'history',
+    tableName: 'HISTORY',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }
@@ -28,7 +28,7 @@ History.init(
 export const associate = (db: DbType): void => {
   db.History.belongsTo(db.Product);
   db.History.belongsTo(db.User);
-  db.History.hasOne(db.Payment);
+  db.History.belongsTo(db.Payment);
 };
 
 export default History;

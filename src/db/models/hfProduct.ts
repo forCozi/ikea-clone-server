@@ -24,7 +24,7 @@ HFProduct.init(
   {
     sequelize,
     modelName: 'HFProduct',
-    tableName: 'hfProduct',
+    tableName: 'HF_PRODUCT',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

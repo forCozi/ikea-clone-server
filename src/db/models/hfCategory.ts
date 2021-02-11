@@ -20,7 +20,7 @@ HFCategory.init(
   {
     sequelize,
     modelName: 'HFCategory',
-    tableName: 'hfCategory',
+    tableName: 'HF_CATEGORY',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

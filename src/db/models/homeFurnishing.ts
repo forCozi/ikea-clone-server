@@ -20,7 +20,7 @@ HomeFurnishing.init(
   {
     sequelize,
     modelName: 'HomeFurnishing',
-    tableName: 'homeFurnishing',
+    tableName: 'HOMEFURNISHING',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

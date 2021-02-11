@@ -23,7 +23,7 @@ BCatecory.init(
   {
     sequelize,
     modelName: 'BCategory',
-    tableName: 'bCategory',
+    tableName: 'B_CATEGORY',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

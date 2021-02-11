@@ -7,6 +7,7 @@ import {
   getWish,
   removeCart,
   removeWish,
+  successPaypal,
 } from '../controller/userProduct/userProduct';
 
 const router = express.Router();
@@ -31,4 +32,7 @@ router.get('/cart/:email', getCart);
 
 //NOTE:내역조회
 router.get('/history/:email', getHistory);
+
+//NOTE:페이팔 결제 성공
+router.post('/payment/paypal', successPaypal);
 export default router;

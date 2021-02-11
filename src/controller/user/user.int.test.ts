@@ -102,14 +102,6 @@ describe('PATCH api/user/find', () => {
 });
 
 describe('GET api/user/logout/:email', () => {
-  test('should return 404', async () => {
-    const res = await request(app)
-      .get(`/api/user/logout/${newUser.email}11`)
-      .set('Cookie', sessionCookie);
-
-    expect(res.status).toBe(404);
-    expect(res.text).toBe('본인이 맞습니까?');
-  });
   test('should logout', async () => {
     const res = await request(app)
       .get(`/api/user/logout/${newUser.email}`)

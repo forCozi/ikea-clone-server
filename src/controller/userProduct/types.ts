@@ -48,3 +48,47 @@ export type GetHistoryHandler = RequestHandler<
   unknown,
   unknown
 >;
+export interface PaypalInfo {
+  address: Address;
+  cancelled: boolean;
+  email: string;
+  paid: boolean;
+  payerID: string;
+  paymentID: string;
+  paymentToken: string;
+  returnUrl: string;
+}
+export interface Address {
+  city: string;
+  country_code: string;
+  line1: string;
+  postal_code: string;
+  recipient_name: string;
+  state: string;
+}
+export interface CartProduct {
+  id: string;
+  title: string;
+  slCost: string;
+  prCost: string;
+  summary: string;
+  size: string;
+  quantity?: number;
+  [key: string]: string | number | undefined;
+}
+export type SuccessPaypalHandler = RequestHandler<
+  unknown,
+  unknown,
+  {
+    payment: PaypalInfo;
+    userInfo: {
+      name: string;
+      email: string;
+      phone: string;
+      address: string;
+      totalPrice: number;
+    };
+    productInfo: CartProduct[];
+  },
+  unknown
+>;

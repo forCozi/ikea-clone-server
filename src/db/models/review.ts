@@ -32,7 +32,7 @@ Review.init(
   {
     sequelize,
     modelName: 'Review',
-    tableName: 'review',
+    tableName: 'REVIEW',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

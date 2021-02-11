@@ -27,7 +27,7 @@ HFImage.init(
   {
     sequelize,
     modelName: 'HFImage',
-    tableName: 'hFImage',
+    tableName: 'HF_IMAGE',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }

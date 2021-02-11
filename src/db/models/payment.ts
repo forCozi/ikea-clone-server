@@ -12,6 +12,7 @@ class Payment extends Model {
   public paymentToken!: string;
   public cancelled!: boolean;
   public address!: string;
+  public totalPrice!: string;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -39,16 +40,20 @@ Payment.init(
     address: {
       type: DataTypes.STRING(256),
     },
+    totalPrice: {
+      type: DataTypes.STRING(24),
+    },
   },
   {
     sequelize,
     modelName: 'Payment',
-    tableName: 'payment',
+    tableName: 'PAYMENT',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }
 );
 export const associate = (db: DbType): void => {
-  db.Payment.belongsTo(db.History);
+  db.Payment.hasMany(db.History);
+  db.Payment.belongsTo(db.User);
 };
 export default Payment;

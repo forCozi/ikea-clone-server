@@ -12,6 +12,7 @@ class Product extends Model {
   public summary!: string;
   public size!: string;
   public sold!: number;
+  public grade!: number;
   public SCategoryId!: number;
 
   public cartUser!: [];
@@ -55,11 +56,15 @@ Product.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
+    grade: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0,
+    },
   },
   {
     sequelize,
     modelName: 'Product',
-    tableName: 'product',
+    tableName: 'PRODUCT',
     charset: 'utf8',
     collate: 'utf8_general_ci',
   }
@@ -72,7 +77,7 @@ export const associate = (db: DbType): void => {
   db.Product.hasMany(db.HFProduct);
   db.Product.belongsTo(db.BCatecory);
   db.Product.belongsTo(db.SCatecory);
-  db.Product.belongsToMany(db.User, { through: 'Cart', as: 'cartUser' });
-  db.Product.belongsToMany(db.User, { through: 'WishList', as: 'wishUser' });
+  db.Product.hasMany(db.Cart);
+  db.Product.belongsToMany(db.User, { through: 'WISHLIST', as: 'wishUser' });
 };
 export default Product;

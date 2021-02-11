@@ -1,4 +1,5 @@
 import BCatecory, { associate as associateBCatecory } from './BigCategory';
+import Cart from './cart';
 import HFCategory, { associate as associateHFCategory } from './hfCategory';
 import HFImage, { associate as associateHFImage } from './hfImage';
 import HFProduct, { associate as associateHFProduct } from './hfProduct';
@@ -28,6 +29,7 @@ const db = {
   Payment,
   HFProduct,
   ProdImage,
+  Cart,
 };
 export type DbType = typeof db;
 
