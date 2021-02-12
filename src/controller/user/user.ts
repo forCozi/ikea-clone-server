@@ -196,7 +196,7 @@ export const updateUser: RequestHandler = async (req, res, next) => {
       return res.status(404).send('회원정보가 없습니다.');
     }
     await exUser.update(req.body.data);
-    return res.status(201).send(req.body.data);
+    return res.status(201).json(req.body.data);
   } catch (e) {
     console.error(e);
     next(e);

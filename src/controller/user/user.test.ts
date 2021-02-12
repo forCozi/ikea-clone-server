@@ -10,6 +10,7 @@ import {
   logOut,
   signUp,
   transporter,
+  updateUser,
   verifiEmail,
 } from './user';
 import passport from 'passport';
@@ -260,6 +261,33 @@ describe('DELETE USER', () => {
     const rejectedPromise = Promise.reject(errorMsg);
     (User.findOne as jest.Mock).mockReturnValue(rejectedPromise);
     await deleteUser(req, res, next);
+    expect(next).toBeCalledWith(errorMsg);
+  });
+});
+
+describe('UPDATE USEr', () => {
+  test('should be function', () => {
+    expect(typeof updateUser).toBe('function');
+  });
+  test('should call User.findOne and return 404', async () => {
+    (User.findOne as jest.Mock).mockReturnValue(null);
+    await updateUser(req, res, next);
+    expect(res.statusCode).toBe(404);
+    expect(res._getData()).toBe('회원정보가 없습니다.');
+  });
+  test('should call selectedUser.update', async () => {
+    req.body = { data: { password: 1 } };
+    const update = jest.fn();
+    (User.findOne as jest.Mock).mockReturnValue({ update });
+    await updateUser(req, res, next);
+    expect(res.statusCode).toBe(201);
+    expect(res._getJSONData()).toEqual({ password: 1 });
+  });
+  test('should handle Error', async () => {
+    const errorMsg = { message: 'error' };
+    const rejectedPromise = Promise.reject(errorMsg);
+    (User.findOne as jest.Mock).mockReturnValue(rejectedPromise);
+    await updateUser(req, res, next);
     expect(next).toBeCalledWith(errorMsg);
   });
 });

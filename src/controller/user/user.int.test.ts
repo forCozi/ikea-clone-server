@@ -101,6 +101,24 @@ describe('PATCH api/user/find', () => {
   });
 });
 
+describe('PATCH api/user/', () => {
+  test('should update username', async () => {
+    const res = await request(app)
+      .patch('/api/user')
+      .send({ data: { name: '변경된이름' } })
+      .set('Cookie', sessionCookie);
+    const user = await User.findOne({ where: { email: newUser.email } });
+    expect(user?.name).toBe('변경된이름');
+    expect(res.status).toBe(201);
+  });
+  test('should handle error when cookie doesnt exist', async () => {
+    const res = await request(app)
+      .patch('/api/user')
+      .send({ data: { name123: '변경된이름' } });
+    expect(res.status).toBe(500);
+  });
+});
+
 describe('GET api/user/logout/:email', () => {
   test('should logout', async () => {
     const res = await request(app)

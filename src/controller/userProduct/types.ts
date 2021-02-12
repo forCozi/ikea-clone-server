@@ -70,10 +70,8 @@ export interface CartProduct {
   id: string;
   title: string;
   slCost: string;
-  prCost: string;
-  summary: string;
   size: string;
-  quantity?: number;
+  quantity: number;
   [key: string]: string | number | undefined;
 }
 export type SuccessPaypalHandler = RequestHandler<

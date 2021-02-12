@@ -67,3 +67,20 @@ describe('GET api/product/:productId', () => {
     expect(res.text).toBe('해당 상품을 찾을 수 없습니다.');
   });
 });
+
+describe('GET api/product/homefurnishing/:cateId', () => {
+  test('should return Product', async () => {
+    const res = await request(app)
+      .get('/api/product/homefurnishing/1')
+      .query({ limit: 2 });
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBe(2);
+  });
+  test('should handle Error', async () => {
+    const res = await request(app)
+      .get('/api/product/homefurnishing/1')
+      .query({ limit: { ee: '12ss' } });
+
+    expect(res.status).toBe(500);
+  });
+});

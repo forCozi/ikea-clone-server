@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpMocks, { MockRequest, MockResponse } from 'node-mocks-http';
-import { getProduct, getProducts, searchProduct } from './product';
+import {
+  getHomeFurnishing,
+  getProduct,
+  getProducts,
+  searchProduct,
+} from './product';
 import Product from '../../db/models/product';
+import HomeFurnishing from '../../db/models/homeFurnishing';
 
 let req: MockRequest<any>;
 let res: MockResponse<any>;
@@ -9,6 +15,7 @@ let next: jest.Mock<any, any>;
 beforeEach(() => {
   Product.findAll = jest.fn();
   Product.findOne = jest.fn();
+  HomeFurnishing.findAll = jest.fn();
   req = httpMocks.createRequest();
   res = httpMocks.createResponse();
   next = jest.fn();
@@ -40,6 +47,7 @@ describe('SEARCH CONTROLLER', () => {
     expect(next).toBeCalledWith(errorMsg);
   });
 });
+
 describe('GET PRODUCT LIST', () => {
   test('should be function', () => {
     expect(typeof getProducts).toBe('function');
@@ -51,12 +59,23 @@ describe('GET PRODUCT LIST', () => {
   });
   test('should return 200', async () => {
     req.params = { cateId: 1 };
-    req.query = { limit: 32, offset: 1 };
+    req.query = { limit: 32, offset: 1, filter: 1 };
     (Product.findAll as jest.Mock).mockReturnValue({ 11: 11 });
     await getProducts(req, res, next);
     expect(Product.findAll).toBeCalledTimes(1);
     expect(res.statusCode).toBe(200);
     expect(res._getJSONData()).toEqual({ 11: 11 });
+  });
+  test('should switch filter', async () => {
+    for (let i = 0; i < 7; i++) {
+      req.params = { cateId: 1 };
+      req.query = { limit: 32, offset: 1, filter: i };
+      (Product.findAll as jest.Mock).mockReturnValue(req.query.filter);
+      await getProducts(req, res, next);
+      expect(Product.findAll).toBeCalled();
+      expect(res.statusCode).toBe(200);
+    }
+    expect(Product.findAll).toBeCalledTimes(7);
   });
   test('should Handle Error', async () => {
     req.params = { cateId: 1 };
@@ -93,6 +112,27 @@ describe('GET DETAIL PRODUCT', () => {
     const rejectedPromise = Promise.reject(errorMsg);
     (Product.findOne as jest.Mock).mockReturnValue(rejectedPromise);
     await getProduct(req, res, next);
+    expect(next).toBeCalledWith(errorMsg);
+  });
+});
+
+describe('GET HOMEFURNISHING', () => {
+  test('should be function', async () => {
+    expect(typeof getHomeFurnishing).toBe('function');
+  });
+  test('should return 200', async () => {
+    req.query = { limit: 1, offset: 1 };
+    req.params = { cateId: 1 };
+    (HomeFurnishing.findAll as jest.Mock).mockReturnValue({ 1: 1 });
+    await getHomeFurnishing(req, res, next);
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toEqual({ 1: 1 });
+  });
+  test('should handle Error', async () => {
+    const errorMsg = { message: 'error' };
+    const rejectedPromise = Promise.reject(errorMsg);
+    (HomeFurnishing.findAll as jest.Mock).mockReturnValue(rejectedPromise);
+    await getHomeFurnishing(req, res, next);
     expect(next).toBeCalledWith(errorMsg);
   });
 });

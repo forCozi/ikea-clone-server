@@ -15,6 +15,7 @@ import {
   SuccessPaypalHandler,
 } from './types';
 
+//NOTE:위시 아이템 추가
 export const addWish: AddWishHandler = async (req, res, next) => {
   try {
     if (req.user?.email !== req.body.userEmail) {
@@ -29,6 +30,8 @@ export const addWish: AddWishHandler = async (req, res, next) => {
     next(e);
   }
 };
+
+//NOTE:장바구니 아이템 추가
 export const addCart: AddCartHandler = async (req, res, next) => {
   try {
     if (req.user?.email !== req.body.userEmail) {
@@ -48,8 +51,6 @@ export const addCart: AddCartHandler = async (req, res, next) => {
       UserId: user.id,
       ProductId: req.body.productId,
     });
-    // await user.addCartItem(req.body.productId);
-
     return res.status(201).json({ productId: req.body.productId });
   } catch (e) {
     console.error(e);
@@ -57,6 +58,7 @@ export const addCart: AddCartHandler = async (req, res, next) => {
   }
 };
 
+//NOTE:위시리스트 아이템 삭제
 export const removeWish: RemoveWishHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.query.email } });
@@ -68,6 +70,8 @@ export const removeWish: RemoveWishHandler = async (req, res, next) => {
     next(e);
   }
 };
+
+//NOTE:장바구니 아이템 삭제
 export const removeCart: RemoveCartHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.query.email } });
@@ -75,7 +79,6 @@ export const removeCart: RemoveCartHandler = async (req, res, next) => {
     await Cart.destroy({
       where: { UserId: user.id, ProductId: req.query.productid },
     });
-    // await user.removeCartItem(req.query.productid);
     return res.status(201).json({ productId: req.query.productid });
   } catch (e) {
     console.error(e);
@@ -83,6 +86,7 @@ export const removeCart: RemoveCartHandler = async (req, res, next) => {
   }
 };
 
+//NOTE:위시리스트 조회
 export const getWish: GetWishHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.params.email } });
@@ -105,6 +109,7 @@ export const getWish: GetWishHandler = async (req, res, next) => {
   }
 };
 
+//NOTE:장바구니리스트 조회
 export const getCart: GetCartHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.params.email } });
@@ -112,20 +117,31 @@ export const getCart: GetCartHandler = async (req, res, next) => {
     const cartLists = await Cart.findAll({
       where: { userId: user.id },
       order: [['createdAt', 'DESC']],
-      // include: [{ model: Product, include: [{ model: ProdImage }] }],
-      include: [{ model: User }],
+      attributes: ['id', 'quantity', 'UserId'],
+      include: [
+        {
+          model: Product,
+          attributes: {
+            exclude: [
+              'detailInfo',
+              'grade',
+              'sold',
+              'BCategoryId',
+              'SCategoryId',
+              'createdAt',
+              'updatedAt',
+            ],
+          },
+          include: [
+            {
+              model: ProdImage,
+              attributes: { exclude: ['createdAt', 'updatedAt', 'ProductId'] },
+              limit: 1,
+            },
+          ],
+        },
+      ],
     });
-    // const cartList = await user.getCartItem({
-    //   attributes: ['id', 'title', 'slCost', 'prCost', 'summary', 'size'],
-    //   order: [['createdAt', 'DESC']],
-    //   include: [
-    //     {
-    //       model: ProdImage,
-    //       limit: 1,
-    //       attributes: { exclude: ['createdAt', 'updatedAt', 'productId'] },
-    //     },
-    //   ],
-    // });
     return res.status(200).json(cartLists);
   } catch (e) {
     console.error(e);
@@ -133,6 +149,7 @@ export const getCart: GetCartHandler = async (req, res, next) => {
   }
 };
 
+//NOTE:구매내역 조회
 export const getHistory: GetHistoryHandler = async (req, res, next) => {
   try {
     const user = await User.findOne({ where: { email: req.params.email } });
@@ -154,18 +171,6 @@ export const getHistory: GetHistoryHandler = async (req, res, next) => {
         },
       ],
     });
-    // const history = await History.findAll({
-    //   where: { UserId: user.id },
-    //   order: [['createdAt', 'DESC']],
-    //   include: [
-    //     { model: Payment },
-    //     {
-    //       model: Product,
-    //       attributes: ['title', 'slCost', 'prCost', 'summary'],
-    //       include: [{ model: ProdImage, attributes: ['src'] }],
-    //     },
-    //   ],
-    // });
     return res.status(200).json(payments);
   } catch (e) {
     console.error(e);
@@ -173,6 +178,7 @@ export const getHistory: GetHistoryHandler = async (req, res, next) => {
   }
 };
 
+//NOTE:페이팔 결제 성공
 export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
   try {
     const histories = [];
@@ -188,6 +194,7 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
       cancelled: req.body.payment.paid === true,
       address: req.body.userInfo.address,
       totalPrice: req.body.userInfo.totalPrice,
+      UserId: user.id,
     });
     for (let i = 0; i < req.body.productInfo.length; i++) {
       histories.push(

@@ -54,8 +54,8 @@ export const getProducts: ListHandler = async (req, res, next) => {
       return res.status(404).send('카테고리를 찾을 수 없습니다.');
     }
     const filter = req.query.filter ? parseInt(req.query.filter) : 0;
-    const cfilter = () => {
-      switch (filter) {
+    const cfilter = (f: number) => {
+      switch (f) {
         case 0:
           return ['createdAt'];
         case 1:
@@ -63,15 +63,16 @@ export const getProducts: ListHandler = async (req, res, next) => {
         case 2:
           return [['slCost', 'DESC']] as OrderItem[];
         case 3:
-          return ['createdAt'];
+          return ['grade'];
         case 4:
           return ['title'];
         case 5:
           return [['sold', 'DESC']] as OrderItem[];
         default:
-          break;
+          return ['createdAt'];
       }
     };
+    const order = cfilter(filter) as OrderItem[];
     const limit = req.query.limit ? parseInt(req.query.limit) : 24;
     const offset = req.query.offset ? parseInt(req.query.offset) : 0;
     const products = await Product.findAll({
@@ -79,7 +80,7 @@ export const getProducts: ListHandler = async (req, res, next) => {
       limit,
       offset,
       // order: ['createdAt'],
-      order: cfilter(),
+      order,
       attributes: { exclude: ['updatedAt'] },
       include: [
         { model: ProdImage, limit: 2, order: ['id'] },
