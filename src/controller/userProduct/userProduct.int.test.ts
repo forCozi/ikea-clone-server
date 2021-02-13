@@ -10,7 +10,7 @@ beforeAll(async () => {
     console.error(e);
   }
 });
-test('should ', async () => {
+test('SET COOKIE', async () => {
   const res = await request(app)
     .post('/api/user/login')
     .send({ email: 'yhg0337@gmail.com', password: 'Dbdnjsrms1@' });
@@ -56,6 +56,15 @@ describe('POST api/userproduct/wish', () => {
   });
 });
 
+describe('GET api/userproduct/wish/:email', () => {
+  test('should retutn 200', async () => {
+    const res = await request(app).get(
+      '/api/userproduct/wish/yhg0337@gmail.com'
+    );
+    expect(res.status).toBe(200);
+  });
+});
+
 describe('POST api/userproduct/cart', () => {
   test('should return 401', async () => {
     const res = await request(app).post('/api/userproduct/cart').send({
@@ -88,6 +97,15 @@ describe('POST api/userproduct/cart', () => {
       'name',
       'SequelizeForeignKeyConstraintError'
     );
+  });
+});
+
+describe('GET api/userproduct/cart/:email', () => {
+  test('should retutn 200', async () => {
+    const res = await request(app).get(
+      '/api/userproduct/cart/yhg0337@gmail.com'
+    );
+    expect(res.status).toBe(200);
   });
 });
 

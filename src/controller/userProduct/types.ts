@@ -74,19 +74,20 @@ export interface CartProduct {
   quantity: number;
   [key: string]: string | number | undefined;
 }
+export type SuccessPaypalReq = {
+  payment: PaypalInfo;
+  userInfo: {
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    totalPrice: number;
+  };
+  productInfo: CartProduct[];
+};
 export type SuccessPaypalHandler = RequestHandler<
   unknown,
   unknown,
-  {
-    payment: PaypalInfo;
-    userInfo: {
-      name: string;
-      email: string;
-      phone: string;
-      address: string;
-      totalPrice: number;
-    };
-    productInfo: CartProduct[];
-  },
+  SuccessPaypalReq,
   unknown
 >;

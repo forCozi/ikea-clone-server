@@ -184,7 +184,7 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
     const histories = [];
     const user = await User.findOne({ where: { email: req.user?.email } });
     if (!user) return res.status(404).send('사용자가 없습니다.');
-    //히스토리에 페이먼트아이디가 들어가야한다. 여러개 상품을 한번에 구매하니까
+
     const payment = await Payment.create({
       payerID: req.body.payment.payerID,
       email: req.body.userInfo.email,
@@ -196,6 +196,7 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
       totalPrice: req.body.userInfo.totalPrice,
       UserId: user.id,
     });
+    if (!payment) return res.status(400).send('오류가 발생하였습니다.');
     for (let i = 0; i < req.body.productInfo.length; i++) {
       histories.push(
         await History.create({
@@ -207,13 +208,11 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
       );
     }
 
-    if (payment) {
-      for (let i = 0; i < req.body.productInfo.length; i++) {
-        await Cart.destroy({
-          where: { UserId: user.id, ProductId: req.body.productInfo[i].id },
-        });
-        // await user.removeCartItem(req.body.productInfo[i].id);
-      }
+    for (let i = 0; i < req.body.productInfo.length; i++) {
+      await Cart.destroy({
+        where: { UserId: user.id, ProductId: req.body.productInfo[i].id },
+      });
+      // await user.removeCartItem(req.body.productInfo[i].id);
     }
     res.status(201).json(histories);
   } catch (e) {
