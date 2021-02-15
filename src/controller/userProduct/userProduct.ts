@@ -1,9 +1,11 @@
+import { RequestHandler } from 'express';
 import Cart from '../../db/models/cart';
 import History from '../../db/models/history';
 import Payment from '../../db/models/payment';
 import Product from '../../db/models/product';
 import ProdImage from '../../db/models/productImage';
 import User from '../../db/models/user';
+import { changePassword } from '../user/user';
 import {
   AddCartHandler,
   AddWishHandler,
@@ -215,6 +217,20 @@ export const successPaypal: SuccessPaypalHandler = async (req, res, next) => {
       // await user.removeCartItem(req.body.productInfo[i].id);
     }
     res.status(201).json(histories);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+export const changeCart: RequestHandler = async (req, res, next) => {
+  try {
+    const changedCart = await Cart.update(
+      { quantity: req.body.quantity },
+      { where: { id: req.body.cartId } }
+    );
+    if (!changedCart) return res.status(400).send('실패');
+    return res.status(201).json(req.body);
   } catch (e) {
     console.error(e);
     next(e);

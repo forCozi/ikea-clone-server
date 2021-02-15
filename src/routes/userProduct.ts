@@ -2,6 +2,7 @@ import express from 'express';
 import {
   addCart,
   addWish,
+  changeCart,
   getCart,
   getHistory,
   getWish,
@@ -35,4 +36,7 @@ router.get('/history/:email', getHistory);
 
 //NOTE:페이팔 결제 성공
 router.post('/payment/paypal', successPaypal);
+
+//NOTE:카트 수량변경
+router.patch('/cart', changeCart);
 export default router;
