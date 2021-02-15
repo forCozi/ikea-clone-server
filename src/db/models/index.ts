@@ -13,9 +13,9 @@ import ProdImage, { associate as associateProdImage } from './productImage';
 import Review, { associate as associateReview } from './review';
 import SCatecory, { associate as associateSCatecory } from './smallCategory';
 import User, { associate as associateUser } from './user';
+import ReviewImage, { associate as associateReviewImage } from './reviewImage';
 
 export * from './sequelize';
-
 const db = {
   User,
   BCatecory,
@@ -30,6 +30,7 @@ const db = {
   HFProduct,
   ProdImage,
   Cart,
+  ReviewImage,
 };
 export type DbType = typeof db;
 
@@ -46,3 +47,4 @@ associateHFCategory(db);
 associateBCatecory(db);
 associateSCatecory(db);
 associateCart(db);
+associateReviewImage(db);

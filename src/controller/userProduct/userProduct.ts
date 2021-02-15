@@ -5,7 +5,6 @@ import Payment from '../../db/models/payment';
 import Product from '../../db/models/product';
 import ProdImage from '../../db/models/productImage';
 import User from '../../db/models/user';
-import { changePassword } from '../user/user';
 import {
   AddCartHandler,
   AddWishHandler,

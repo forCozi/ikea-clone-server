@@ -54,3 +54,18 @@ export type HomeFurnishingHandler = RequestHandler<
   undefined,
   { offset?: string; limit?: string }
 >;
+
+export type CreateReviewHandler = RequestHandler<
+  undefined,
+  unknown,
+  {
+    title: string;
+    content: string;
+    grade: number;
+    recommend: boolean;
+    userId: number;
+    productId: string;
+    images: string[];
+  },
+  unknown
+>;

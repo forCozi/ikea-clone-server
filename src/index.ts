@@ -32,6 +32,7 @@ if (prod) {
   morgan('dev');
   app.use(cors({ origin: true, credentials: true }));
 }
+app.use('/u/r', express.static(path.join(__dirname, 'uploads/reviews')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_KEY));

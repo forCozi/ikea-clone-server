@@ -5,6 +5,7 @@ import ProdImage from '../../db/models/productImage';
 import SCatecory from '../../db/models/smallCategory';
 import User from '../../db/models/user';
 import {
+  CreateReviewHandler,
   DetailHandler,
   HomeFurnishingHandler,
   ListHandler,
@@ -14,6 +15,9 @@ import HomeFurnishing from '../../db/models/homeFurnishing';
 import HFImage from '../../db/models/hfImage';
 import HFProduct from '../../db/models/hfProduct';
 import Cart from '../../db/models/cart';
+import { RequestHandler } from 'express';
+import Review from '../../db/models/review';
+import ReviewImage from '../../db/models/reviewImage';
 
 //NOTE: 검색
 export const searchProduct: SearchHandler = async (req, res, next) => {
@@ -150,6 +154,70 @@ export const getHomeFurnishing: HomeFurnishingHandler = async (
       ],
     });
     return res.status(200).json(list);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+//NOTE:이미지 업로드용
+export const imageUpload: RequestHandler = async (req, res) => {
+  console.log(req.files as Express.Multer.File[]);
+  res.json((req.files as Express.Multer.File[]).map(v => v.filename));
+};
+
+//NOTE:리뷰작성
+export const createReview: CreateReviewHandler = async (req, res, next) => {
+  try {
+    const product = await Product.findOne({
+      where: { id: req.body.productId },
+    });
+    if (!product) return res.status(404).send('해당상품이 존재하지 않습니다.');
+    const avgGrade =
+      product.grade === 0
+        ? req.body.grade
+        : (req.body.grade + product.grade) / 2;
+    await product.update({ grade: avgGrade });
+
+    const review = await Review.create({
+      title: req.body.title,
+      content: req.body.content,
+      recommend: req.body.recommend,
+      UserId: req.body.userId,
+      grade: req.body.grade,
+      ProductId: req.body.productId,
+    });
+    //평점반영
+    await Promise.all(
+      req.body.images.map(v =>
+        ReviewImage.create({ src: v, ReviewId: review.id })
+      )
+    );
+
+    const getReview = await Review.findOne({
+      where: { id: review.id },
+      include: [{ model: ReviewImage, attributes: ['id', 'src'] }],
+    });
+    res.status(201).json(getReview);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+//NOTE:리뷰조회
+export const getReview: RequestHandler = async (req, res, next) => {
+  try {
+    const reviews = await Review.findAll({
+      where: { ProductId: req.params.productId },
+      order: [['createdAt', 'DESC']],
+      include: [
+        { model: ReviewImage, attributes: ['src'] },
+        { model: User, attributes: ['id', 'name'] },
+      ],
+      attributes: { exclude: ['updatedAt'] },
+    });
+    res.status(200).json(reviews);
   } catch (e) {
     console.error(e);
     next(e);

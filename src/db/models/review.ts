@@ -40,6 +40,7 @@ Review.init(
 export const associate = (db: DbType): void => {
   db.Review.belongsTo(db.Product);
   db.Review.belongsTo(db.User);
+  db.Review.hasMany(db.ReviewImage);
 };
 
 export default Review;
