@@ -8,6 +8,7 @@ import { SuccessPaypalReq } from './types';
 import {
   addCart,
   addWish,
+  changeCart,
   getCart,
   getHistory,
   getWish,
@@ -24,6 +25,7 @@ beforeEach(() => {
   Cart.destroy = jest.fn();
   Cart.findOne = jest.fn();
   Cart.findAll = jest.fn();
+  Cart.update = jest.fn();
   Payment.create = jest.fn();
   History.create = jest.fn();
   Cart.destroy = jest.fn();
@@ -289,6 +291,34 @@ describe('PAYPAL SUCCESS', () => {
     const rejectedPromise = Promise.reject(errorMsg);
     (User.findOne as jest.Mock).mockReturnValue(rejectedPromise);
     await successPaypal(req, res, next);
+    expect(next).toBeCalledWith(errorMsg);
+  });
+});
+
+describe('CHANGE CART', () => {
+  test('should be function', () => {
+    expect(typeof changeCart).toBe('function');
+  });
+
+  test('should call Cart.update and return 400', async () => {
+    req.body = { quantity: 1, cartId: 1 };
+    (Cart.update as jest.Mock).mockReturnValue(false);
+    await changeCart(req, res, next);
+    expect(Cart.update).toBeCalledWith({ quantity: 1 }, { where: { id: 1 } });
+    expect(res.statusCode).toBe(400);
+  });
+  test('should call Cart.update and return 201', async () => {
+    req.body = { quantity: 1, cartId: 1 };
+    (Cart.update as jest.Mock).mockReturnValue(true);
+    await changeCart(req, res, next);
+    expect(res.statusCode).toBe(201);
+    expect(res._getJSONData()).toEqual({ quantity: 1, cartId: 1 });
+  });
+  test('should handle Error', async () => {
+    const errorMsg = { message: 'error' };
+    const rejectedPromise = Promise.reject(errorMsg);
+    (Cart.update as jest.Mock).mockReturnValue(rejectedPromise);
+    await changeCart(req, res, next);
     expect(next).toBeCalledWith(errorMsg);
   });
 });

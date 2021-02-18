@@ -16,10 +16,11 @@ import {
 const router = express.Router();
 
 try {
-  fs.accessSync('src/uploads/reviews');
+  fs.accessSync(path.join('src', 'uploads', 'reviews'));
 } catch (e) {
   console.log('폴더가 없어서 생성합니다.');
-  fs.mkdirSync('src/uploads/reviews');
+  fs.mkdirSync(path.join('src', 'uploads'));
+  fs.mkdirSync(path.join('src', 'uploads', 'reviews'));
 }
 
 const upload = multer({
@@ -43,9 +44,6 @@ router.get('/search', searchProduct);
 router.get('/list/:cateId', getProducts);
 
 //NOTE:상품디테일조회
-router.get('/:productId', getProduct);
-
-//NOTE:상품디테일조회
 router.get('/homefurnishing/:cateId', getHomeFurnishing);
 
 //NOTE:이미지 업로드
@@ -56,5 +54,8 @@ router.post('/review', createReview);
 
 //NOTE:리뷰조회
 router.get('/review/:productId', getReview);
+
+//NOTE:상품디테일조회
+router.get('/:productId', getProduct);
 
 export default router;

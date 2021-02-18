@@ -97,7 +97,7 @@ export const logIn: RequestHandler = async (req, res, next) => {
         include: [
           {
             model: Cart,
-            attributes: ['id'],
+            attributes: ['id', 'ProductId'],
           },
           {
             model: Product,

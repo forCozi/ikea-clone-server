@@ -15,6 +15,8 @@ class Product extends Model {
   public grade!: number;
   public SCategoryId!: number;
 
+  public reviewLength?: number;
+
   public cartUser!: [];
   public wishLength!: number;
 

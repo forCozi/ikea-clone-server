@@ -1,13 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpMocks, { MockRequest, MockResponse } from 'node-mocks-http';
 import {
+  createReview,
   getHomeFurnishing,
   getProduct,
   getProducts,
+  getReview,
+  imageUpload,
   searchProduct,
 } from './product';
 import Product from '../../db/models/product';
 import HomeFurnishing from '../../db/models/homeFurnishing';
+import Review from '../../db/models/review';
+import ReviewImage from '../../db/models/reviewImage';
+import User from '../../db/models/user';
 
 let req: MockRequest<any>;
 let res: MockResponse<any>;
@@ -16,6 +22,10 @@ beforeEach(() => {
   Product.findAll = jest.fn();
   Product.findOne = jest.fn();
   HomeFurnishing.findAll = jest.fn();
+  Review.create = jest.fn();
+  ReviewImage.create = jest.fn();
+  Review.findOne = jest.fn();
+  Review.findAll = jest.fn();
   req = httpMocks.createRequest();
   res = httpMocks.createResponse();
   next = jest.fn();
@@ -133,6 +143,78 @@ describe('GET HOMEFURNISHING', () => {
     const rejectedPromise = Promise.reject(errorMsg);
     (HomeFurnishing.findAll as jest.Mock).mockReturnValue(rejectedPromise);
     await getHomeFurnishing(req, res, next);
+    expect(next).toBeCalledWith(errorMsg);
+  });
+});
+
+describe('CREATE IMAGE', () => {
+  test('should be function', () => {
+    expect(typeof imageUpload).toBe('function');
+  });
+  test('should call', async () => {
+    req.files = [{ filename: '123' }];
+    await imageUpload(req, res, next);
+    expect(res._getJSONData()).toEqual(['123']);
+  });
+});
+
+describe('CREATE REVIEW', () => {
+  test('should be function', () => {
+    expect(typeof createReview).toBe('function');
+  });
+  test('should call Product.findOne and return 404', async () => {
+    (Product.findOne as jest.Mock).mockReturnValue(false);
+    await createReview(req, res, next);
+    expect(Product.findOne).toBeCalledTimes(1);
+    expect(res.statusCode).toBe(404);
+  });
+  test('if product.grade = 0', async () => {
+    req.body = { grade: 3 };
+    const update = jest.fn();
+    (Product.findOne as jest.Mock).mockReturnValue({ grade: 0, update });
+    await createReview(req, res, next);
+    expect(Product.findOne).toBeCalledTimes(1);
+    expect(update).toBeCalledTimes(1);
+    expect(Review.create).toBeCalledTimes(1);
+  });
+  test('should call ReviewImage.create and Review.findOne', async () => {
+    req.body = { grade: 3, images: [1] };
+    const update = jest.fn();
+    (Product.findOne as jest.Mock).mockReturnValue({ grade: 3, update });
+    (Review.create as jest.Mock).mockReturnValue({ id: 1 });
+    await createReview(req, res, next);
+    expect(update).toBeCalledTimes(1);
+    expect(Review.create).toBeCalledTimes(1);
+    expect(ReviewImage.create).toBeCalledTimes(1);
+    expect(res.statusCode).toBe(201);
+  });
+});
+
+describe('GET REVIEW', () => {
+  test('should be function', () => {
+    expect(typeof getReview).toBe('function');
+  });
+  test('should call Review.findAll', async () => {
+    req.params = { productId: '11' };
+    (Review.findAll as jest.Mock).mockReturnValue([1, 2, 3]);
+    await getReview(req, res, next);
+    expect(Review.findAll).toBeCalledWith({
+      where: { ProductId: '11' },
+      order: [['createdAt', 'DESC']],
+      include: [
+        { model: ReviewImage, attributes: ['src'] },
+        { model: User, attributes: ['id', 'name'] },
+      ],
+      attributes: { exclude: ['updatedAt'] },
+    });
+    expect(res.statusCode).toBe(200);
+    expect(res._getJSONData()).toEqual([1, 2, 3]);
+  });
+  test('should handle Error', async () => {
+    const errorMsg = { message: 'error' };
+    const rejectedPromise = Promise.reject(errorMsg);
+    (Review.findAll as jest.Mock).mockReturnValue(rejectedPromise);
+    await getReview(req, res, next);
     expect(next).toBeCalledWith(errorMsg);
   });
 });

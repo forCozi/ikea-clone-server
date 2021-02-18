@@ -112,12 +112,12 @@ export const getProduct: DetailHandler = async (req, res, next) => {
           attributes: { exclude: ['createdAt', 'ProductId', 'updatedAt'] },
         },
         { model: User, as: 'wishUser', attributes: ['id'] },
+        { model: Review, attributes: ['id'] },
       ],
     });
     if (!product) {
       return res.status(404).send('해당 상품을 찾을 수 없습니다.');
     }
-
     return res.status(200).json(product);
   } catch (e) {
     console.error(e);
