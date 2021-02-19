@@ -1,6 +1,8 @@
 import request from 'supertest';
 import app from '../../index';
 import { sequelize } from '../../db/models';
+import { SuccessPaypalReq } from './types';
+import cryptoRandomString from 'crypto-random-string';
 let sessionCookie: string[];
 beforeAll(async () => {
   try {
@@ -144,5 +146,67 @@ describe('DELETE api/userproduct/wish', () => {
     });
     expect(res.status).toBe(404);
     expect(res.text).toBe('사용자가 없습니다.');
+  });
+});
+
+describe('get api/userproduct/history/:email', () => {
+  test('should return history', async () => {
+    const res = await request(app).get(
+      '/api/userproduct/history/yhg0337@gmail.com'
+    );
+    expect(res.status).toBe(200);
+    expect(res.body.length).toBeGreaterThanOrEqual(6);
+  });
+  test('should return not found', async () => {
+    const res = await request(app).get(
+      '/api/userproduct/history/yhg0337@gmail.com11'
+    );
+    expect(res.status).toBe(404);
+    expect(res.text).toBe('사용자가 없습니다.');
+  });
+});
+describe('get api/userproduct/payment/paypal', () => {
+  const mockPayment: SuccessPaypalReq = {
+    userInfo: {
+      address: '1',
+      email: cryptoRandomString({ length: 4 }),
+      name: '1',
+      phone: '1',
+      totalPrice: 111,
+    },
+    payment: {
+      email: cryptoRandomString({ length: 4 }),
+      address: {
+        city: '1',
+        country_code: '1',
+        line1: '1',
+        postal_code: '1',
+        recipient_name: '1',
+        state: '1',
+      },
+      cancelled: false,
+      paid: true,
+      payerID: '1',
+      paymentID: cryptoRandomString({ length: 4 }),
+      paymentToken: cryptoRandomString({ length: 4 }),
+      returnUrl: cryptoRandomString({ length: 4 }),
+    },
+    productInfo: [
+      { id: '00141670', quantity: 1, size: '1', slCost: '1', title: '1' },
+    ],
+  };
+  test('should return 404 when cookie doesnt exist', async () => {
+    const res = await request(app)
+      .post('/api/userproduct/payment/paypal')
+      .send(mockPayment);
+    expect(res.status).toBe(500);
+  });
+  test('should be created and return histories what length equal req.body.productInfo.length', async () => {
+    const res = await request(app)
+      .post('/api/userproduct/payment/paypal')
+      .set('Cookie', sessionCookie)
+      .send(mockPayment);
+    expect(res.status).toBe(201);
+    expect(res.body.length).toBe(mockPayment.productInfo.length);
   });
 });

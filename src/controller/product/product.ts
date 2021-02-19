@@ -29,12 +29,6 @@ export const searchProduct: SearchHandler = async (req, res, next) => {
           {
             title: { [Op.like]: `%${keyword}%` },
           },
-          // {
-          //   detailInfo: { [Op.like]: `%${keyword}%` },
-          // },
-          // {
-          //   summary: { [Op.like]: `%${keyword}%` },
-          // },
         ],
       },
       attributes: ['id', 'title'],
@@ -83,7 +77,6 @@ export const getProducts: ListHandler = async (req, res, next) => {
       where: { SCategoryId: req.params.cateId },
       limit,
       offset,
-      // order: ['createdAt'],
       order,
       attributes: { exclude: ['updatedAt'] },
       include: [

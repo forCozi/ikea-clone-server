@@ -1,6 +1,9 @@
 import request from 'supertest';
+
 import app from '../../index';
 import { sequelize } from '../../db/models';
+import IMGFILE from '../../utils/data/home-funising/아웃도어.json';
+import { randomFillSync } from 'crypto';
 
 beforeAll(async () => {
   try {
@@ -84,3 +87,21 @@ describe('GET api/product/homefurnishing/:cateId', () => {
     expect(res.status).toBe(500);
   });
 });
+
+describe('GET api/product/review/:productId', () => {
+  test('should return reviews', async () => {
+    const res = await request(app).get('/api/product/review/00181982');
+
+    expect(res.status).toBe(200);
+  });
+});
+
+// describe('POST /api/userproduct/images', () => {
+//   test('should handle Error upload folder', async () => {
+//     const res = await request(app)
+//       .post('/api/product/images')
+//       .field('name', 'John Doe')
+//       .attach('image', '../../utils/data/home-funising/아웃도어.json');
+//     expect(res.status).toBe(201);
+//   });
+// });
