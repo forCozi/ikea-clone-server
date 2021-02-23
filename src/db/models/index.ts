@@ -1,4 +1,4 @@
-import BCatecory, { associate as associateBCatecory } from './BigCategory';
+import BCatecory, { associate as associateBCatecory } from './bigCategory';
 import Cart, { associate as associateCart } from './cart';
 import HFCategory, { associate as associateHFCategory } from './hfCategory';
 import HFImage, { associate as associateHFImage } from './hfImage';

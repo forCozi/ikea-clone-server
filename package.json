@@ -7,7 +7,7 @@
     "dev": "nodemon",
     "prestart": "tsc",
     "test": "jest",
-    "start": "ts-node src/index"
+    "start": "ts-node -r esm build/index"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

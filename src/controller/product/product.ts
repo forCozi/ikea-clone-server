@@ -1,5 +1,5 @@
 import { Op, OrderItem } from 'sequelize';
-import BCatecory from '../../db/models/BigCategory';
+import BCatecory from '../../db/models/bigCategory';
 import Product from '../../db/models/product';
 import ProdImage from '../../db/models/productImage';
 import SCatecory from '../../db/models/smallCategory';
