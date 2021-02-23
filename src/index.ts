@@ -13,6 +13,7 @@ import { Error } from 'sequelize/types';
 
 const test = process.env.NODE_ENV === 'test';
 const prod = process.env.NODE_ENV === 'production';
+console.log('****', process.env.NODE_ENV, '****');
 if (!test) {
   dotenv.config();
   sequelize
@@ -27,7 +28,7 @@ passportConfig();
 
 if (prod) {
   morgan('combined');
-  app.use(cors({ origin: '도메인', credentials: true }));
+  app.use(cors({ origin: true, credentials: true }));
 } else {
   morgan('dev');
   app.use(cors({ origin: true, credentials: true }));

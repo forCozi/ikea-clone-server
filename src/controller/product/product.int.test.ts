@@ -2,8 +2,6 @@ import request from 'supertest';
 
 import app from '../../index';
 import { sequelize } from '../../db/models';
-import IMGFILE from '../../utils/data/home-funising/아웃도어.json';
-import { randomFillSync } from 'crypto';
 
 beforeAll(async () => {
   try {
