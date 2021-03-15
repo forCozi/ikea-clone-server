@@ -4,6 +4,9 @@ import config from '../config/config';
 type envTypes = 'production' | 'test' | 'development';
 const env = (process.env.NODE_ENV as envTypes) || 'development';
 const { database, username, password } = config[env];
-const sequelize = new Sequelize(database, username, password, config[env]);
+const sequelize = new Sequelize(database, username, password, {
+  host: config.development.host,
+  dialect: 'mysql',
+});
 export { sequelize };
 export default sequelize;

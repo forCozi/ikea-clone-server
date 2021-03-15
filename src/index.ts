@@ -42,10 +42,12 @@ app.use(
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_KEY as string,
+    //나중에 ssl키 넣고 도메인 netlify추가 / secure : true , sameSite:none으로 바꾸기
     cookie: {
       httpOnly: true,
       secure: false, // https -> true
       domain: prod ? '.wongeun.com' : undefined,
+      sameSite: 'none',
     },
     name: 'rnbck',
   })
