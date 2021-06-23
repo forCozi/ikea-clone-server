@@ -5,10 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "nodemon",
-    "prestart": "tsc",
+    "build": "tsc",
     "test": "jest",
-    "start": "ts-node -r esm build/index",
-    "deploy": "pm2 start build/index.js"
+    "start":"pm2 start ecosystem.config.js --env production",
+    "start -test":"pm2 start ecosystem.config.js --env production",
+    "win-start": "cross-env NODE_ENV=production sudo pm2 start build/index.js"
   },
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
@@ -18,6 +19,7 @@
     "@types/dotenv-flow": "^3.1.0",
     "@types/express": "^4.17.11",
     "@types/express-session": "^1.17.3",
+    "@types/hpp": "^0.2.1",
     "@types/jest": "^26.0.20",
     "@types/morgan": "^1.9.2",
     "@types/multer": "^1.4.5",
@@ -43,12 +45,15 @@
     "bcrypt": "^5.0.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "crypto-random-string": "^3.3.0",
     "dotenv": "^8.2.0",
     "dotenv-flow": "^3.2.0",
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "express-session": "^1.17.1",
+    "helmet": "^4.6.0",
+    "hpp": "^0.2.3",
     "morgan": "^1.10.0",
     "multer": "^1.4.2",
     "mysql2": "^2.2.5",

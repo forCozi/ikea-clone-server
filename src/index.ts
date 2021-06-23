@@ -1,19 +1,21 @@
-import express, { NextFunction, Request, Response } from 'express';
-import expressSession from 'express-session';
+import express from 'express';
+import expressSession, { CookieOptions } from 'express-session';
 import cors from 'cors';
 import dotenv from 'dotenv-flow';
-import router from './routes';
-import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import hpp from 'hpp';
+import morgan from 'morgan';
 import path from 'path';
 import passport from 'passport';
+
 import passportConfig from './passport';
 import { sequelize } from './db/models';
-import { Error } from 'sequelize/types';
+import router from './routes';
 
 const test = process.env.NODE_ENV === 'test';
 const prod = process.env.NODE_ENV === 'production';
-console.log('****', process.env.NODE_ENV, '****');
+
 if (!test) {
   dotenv.config();
   sequelize
@@ -24,32 +26,55 @@ if (!test) {
 const PORT = prod ? process.env.PROD_PORT : test ? 7777 : process.env.DEV_PORT;
 
 const app = express();
+
 passportConfig();
 
+let CookieConf: CookieOptions;
 if (prod) {
   morgan('combined');
-  app.use(cors({ origin: true, credentials: true }));
+  app.use(helmet());
+  app.use(hpp());
+  app.use(
+    cors({
+      origin: [
+        'http://localhost:3000',
+        'https://www.wikea.shop',
+        'https://wikea.shop',
+        'https://wikea.netlify.app',
+      ],
+      credentials: true,
+    })
+  );
+  CookieConf = {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'none',
+    path: '/',
+    domain: '.wikea.shop',
+  };
 } else {
   morgan('dev');
   app.use(cors({ origin: true, credentials: true }));
+  CookieConf = {
+    httpOnly: true,
+    secure: false,
+    path: '/',
+    domain: undefined,
+  };
 }
 app.use('/u/r', express.static(path.join(__dirname, 'uploads/reviews')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_KEY));
+app.set('trust proxy', 1);
 app.use(
   expressSession({
     resave: false,
     saveUninitialized: false,
     secret: process.env.COOKIE_KEY as string,
-    //나중에 ssl키 넣고 도메인 netlify추가 / secure : true , sameSite:none으로 바꾸기
-    cookie: {
-      httpOnly: true,
-      secure: false, // https -> true
-      domain: prod ? '.wongeun.com' : undefined,
-      sameSite: 'none',
-    },
-    name: 'rnbck',
+    proxy: true,
+    cookie: CookieConf,
+    name: 'develuth',
   })
 );
 app.use(passport.initialize());
@@ -61,11 +86,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', router);
-// app.use('/scrap', insertRouter);
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json(err);
-});
+
 app.listen(PORT, () => {
   console.log(`${PORT}번 포트에서 서버실행`);
 });
