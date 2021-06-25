@@ -60,8 +60,9 @@ export const signUp: RequestHandler = async (req, res, next) => {
 //NOTE:이메일 인증
 export const verifiEmail: RequestHandler = async (req, res, next) => {
   try {
-    const email = req.body.email || req.query.email;
-    const randomNum = req.body.number || req.query.number;
+    const email = req.query.email || '';
+    const randomNum = req.query.number || '';
+
     const user = await User.findOne({
       where: { email: email, verification: randomNum },
     });

@@ -153,12 +153,6 @@ export const getHomeFurnishing: HomeFurnishingHandler = async (
   }
 };
 
-//NOTE:이미지 업로드용
-export const imageUpload: RequestHandler = async (req, res) => {
-  console.log(req.files as Express.Multer.File[]);
-  res.json((req.files as Express.Multer.File[]).map(v => v.filename));
-};
-
 //NOTE:리뷰작성
 export const createReview: CreateReviewHandler = async (req, res, next) => {
   try {

@@ -16,7 +16,7 @@ const router = express.Router();
 router.post('/', signUp);
 
 //NOTE: 이메일 인증
-router.post('/verif', verifiEmail);
+router.get('/verif', verifiEmail);
 
 //NOTE: 로그인
 router.post('/login', logIn);

@@ -8,7 +8,8 @@
     "build": "tsc",
     "test": "jest",
     "start":"pm2 start ecosystem.config.js --env production",
-    "start -test":"pm2 start ecosystem.config.js --env production",
+    "start-once":"cross-env NODE_ENV=production sudo node build/index.js",
+    "start-test":"pm2 start ecosystem.config.js --env production",
     "win-start": "cross-env NODE_ENV=production sudo pm2 start build/index.js"
   },
   "devDependencies": {
