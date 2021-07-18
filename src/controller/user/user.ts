@@ -127,7 +127,7 @@ export const findPassword: RequestHandler = async (req, res, next) => {
       to: req.params.email,
       subject: 'IKEA 비밀번호 변경',
       text: '안녕하세요!!',
-      html: `<h2>${user.name}님! 아래 링크를 통해 비밀번호를 변경해주세요! </h2><a href='${process.env.CLIENT_DOMAIN}/user/signin/change/${req.params.email}'>이동</a>`,
+      html: `<h2>${user.name}님! 아래 링크를 통해 비밀번호를 변경해주세요! </h2><a href='${process.env.CLIENT_DOMAIN}/#/user/signin/change/${req.params.email}'>이동</a>`,
     });
     return res
       .status(200)

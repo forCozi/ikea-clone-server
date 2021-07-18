@@ -38,8 +38,8 @@ if (prod) {
     cors({
       origin: [
         'http://localhost:3000',
-        'https://www.wikea.shop',
-        'https://wikea.shop',
+        'https://www.wikea.site',
+        'https://wikea.site',
         'https://wikea.netlify.app',
       ],
       credentials: true,
@@ -50,7 +50,7 @@ if (prod) {
     secure: true,
     sameSite: 'none',
     path: '/',
-    domain: '.wikea.shop',
+    domain: '.wikea.site',
   };
 } else {
   morgan('dev');
